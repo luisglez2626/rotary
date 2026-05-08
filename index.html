@@ -1,365 +1,379 @@
-import React, { useState } from 'react';
-import { 
-  MapPin, 
-  Users, 
-  HeartHandshake, 
-  Globe, 
-  FileText, 
-  Mail, 
-  Phone, 
-  Map, 
-  ChevronRight,
-  ShieldCheck,
-  Award
-} from 'lucide-react';
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Distrito 4195 - Rotary International</title>
+    
+    <!-- Tailwind CSS (Carga desde CDN para la demo) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- React y ReactDOM -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    
+    <!-- Babel (Para traducir JSX a JS nativo en el navegador) -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body class="font-sans text-slate-800 bg-slate-50 min-h-screen">
+    <div id="root"></div>
 
-// --- DATOS SIMULADOS BASADOS EN TU LISTA ---
-const districtStats = {
-  totalClubs: 81,
-  totalMembers: 1215, // 81 * 15
-  states: [
-    {
-      name: "Quintana Roo",
-      clubsCount: 14,
-      members: 210,
-      clubs: ["Cancún", "Cancún Bicentenario", "Cancún Conmemorativo", "Cancún Internacional", "Cancún Zona Hotelera", "Kukulkan Cancun", "Playa del Carmen", "Playa del Carmen Empresarial", "Playa del Carmen Seaside", "Cozumel", "Chetumal", "Bacalar", "Tulum", "Puerto Morelos"]
-    },
-    {
-      name: "Yucatán",
-      clubsCount: 14,
-      members: 210,
-      clubs: ["Mérida", "Mérida English", "Mérida Norte", "Mérida-Itzaes", "Mérida-Montejo", "Meridanas", "Todos Somos Merida", "Ya'ax Ché Mérida", "Ejecutivo de Progreso", "Puerto Progreso", "Motul", "Izamal Tres Culturas", "Tizimín", "Valladolid Pueblo Mágico", "Ticul Perla del Sur"]
-    },
-    {
-      name: "Chiapas",
-      clubsCount: 13,
-      members: 195,
-      clubs: ["Tuxtla Gutiérrez", "Amanecer de Tuxtla Gutierrez", "Ambar en Tuxtla Gutiérrez", "Ejecutivo de Tuxtla Gutiérrez", "Oriente de Tuxtla Gutiérrez", "Poniente de Tuxtla Gutierrez", "Tuxtla Milenio", "San Cristóbal de las Casas", "Ciudad Real San Cristóbal", "Ejecutivo San Cristobal", "Tapachula Centenario", "Comitan de Dominguez", "Palenque", "Chiapa de Corzo"]
-    },
-    {
-      name: "Tabasco",
-      clubsCount: 10,
-      members: 150,
-      clubs: ["Villahermosa", "Centenario Villahermosa", "Macuili-Villahermosa", "Real del Grijalva", "Tabasco 2000", "Tabasco Villahermosa", "Villahermosa Meyaj", "Villahermosa Olmeca", "Cárdenas", "Loma Bonita"]
-    },
-    {
-      name: "Oaxaca",
-      clubsCount: 15,
-      members: 225,
-      clubs: ["Oaxaca", "Oaxaca Antequera", "Oaxaca Benemérito", "Oaxaca Binnizá", "Guelaguetza de Oaxaca", "Xquenda Oaxaca", "Bahías de Huatulco", "Puerto Escondido", "Zicatela-Puerto Escondido", "Tehuantepec", "Salina Cruz", "Santiago Pinotepa Nacional", "Huajuapan de León", "La Mixteca de Huajuapan", "Pochtl-Tlán de San Pedro Pochutla"]
-    },
-    {
-      name: "Campeche",
-      clubsCount: 8,
-      members: 120,
-      clubs: ["Campeche", "Ciudad del Carmen", "Ciudad del Carmen-Centenario", "Ciudad del Carmen-Centro", "Perla del Golfo", "Xicalango Ciudad del Carmen", "Escárcega", "Montecristo"]
-    },
-    {
-      name: "Veracruz (Sur)",
-      clubsCount: 7,
-      members: 105,
-      clubs: ["Coatzacoalcos", "Minatitlán", "Acayucan", "San Andrés Tuxtla Eyipantla", "Catemaco", "Isla", "Tuxtepec"] // Nota: Tuxtepec es Oaxaca pero a menudo agrupado por cercanía
-    }
-  ]
-};
+    <script type="text/babel">
+        const { useState } = React;
 
-export default function App() {
-  const [activeState, setActiveState] = useState(districtStats.states[0]);
+        // --- ICONOS (Reemplazo de lucide-react para versión web pura) ---
+        const Icons = {
+            MapPin: ({className}) => <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>,
+            Users: ({className}) => <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>,
+            HeartHandshake: ({className}) => <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/><path d="M12 5 9.04 7.96a2.17 2.17 0 0 0 0 3.08v0c.82.82 2.13.85 3 .07l2.07-1.9a2.82 2.82 0 0 1 3.79 0l2.96 2.66"/><path d="m18 15-2-2"/><path d="m15 18-2-2"/></svg>,
+            Globe: ({className}) => <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>,
+            FileText: ({className}) => <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></svg>,
+            Mail: ({className}) => <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>,
+            Phone: ({className}) => <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>,
+            Map: ({className}) => <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" x2="9" y1="3" y2="18"/><line x1="15" x2="15" y1="6" y2="21"/></svg>,
+            ChevronRight: ({className}) => <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>,
+            ShieldCheck: ({className}) => <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg>,
+            Award: ({className}) => <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>
+        };
 
-  return (
-    <div className="font-sans text-slate-800 bg-slate-50 min-h-screen">
-      {/* HEADER / NAVIGATION */}
-      <header className="bg-blue-900 text-white sticky top-0 z-50 shadow-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-20">
-            <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center p-1">
-                {/* Placeholder for Rotary Wheel */}
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Rotary_International_Seal.svg/1200px-Rotary_International_Seal.svg.png" alt="Rotary Logo" className="w-full h-full object-contain" />
-              </div>
-              <div>
-                <h1 className="text-xl font-bold leading-tight">Distrito 4195</h1>
-                <p className="text-sm text-blue-200">Rotary International</p>
-              </div>
-            </div>
-            <nav className="hidden md:flex space-x-8">
-              <a href="#gobernador" className="hover:text-yellow-400 transition">Gobernador</a>
-              <a href="#clubes" className="hover:text-yellow-400 transition">Clubes</a>
-              <a href="#programas" className="hover:text-yellow-400 transition">Programas</a>
-              <a href="#informe" className="hover:text-yellow-400 transition">Informe Anual</a>
-              <a href="#contacto" className="hover:text-yellow-400 transition">Contacto</a>
-            </nav>
-            <div>
-              <a href="#donar" className="bg-yellow-500 text-blue-900 px-6 py-2 rounded-full font-bold hover:bg-yellow-400 transition shadow-lg">
-                Donar
-              </a>
-            </div>
-          </div>
-        </div>
-      </header>
+        // --- DATOS SIMULADOS BASADOS EN TU LISTA ---
+        const districtStats = {
+            totalClubs: 81,
+            totalMembers: 1215, // 81 * 15
+            states: [
+                {
+                    name: "Quintana Roo",
+                    clubsCount: 14,
+                    members: 210,
+                    clubs: ["Cancún", "Cancún Bicentenario", "Cancún Conmemorativo", "Cancún Internacional", "Cancún Zona Hotelera", "Kukulkan Cancun", "Playa del Carmen", "Playa del Carmen Empresarial", "Playa del Carmen Seaside", "Cozumel", "Chetumal", "Bacalar", "Tulum", "Puerto Morelos"]
+                },
+                {
+                    name: "Yucatán",
+                    clubsCount: 14,
+                    members: 210,
+                    clubs: ["Mérida", "Mérida English", "Mérida Norte", "Mérida-Itzaes", "Mérida-Montejo", "Meridanas", "Todos Somos Merida", "Ya'ax Ché Mérida", "Ejecutivo de Progreso", "Puerto Progreso", "Motul", "Izamal Tres Culturas", "Tizimín", "Valladolid Pueblo Mágico", "Ticul Perla del Sur"]
+                },
+                {
+                    name: "Chiapas",
+                    clubsCount: 13,
+                    members: 195,
+                    clubs: ["Tuxtla Gutiérrez", "Amanecer de Tuxtla Gutierrez", "Ambar en Tuxtla Gutiérrez", "Ejecutivo de Tuxtla Gutiérrez", "Oriente de Tuxtla Gutiérrez", "Poniente de Tuxtla Gutierrez", "Tuxtla Milenio", "San Cristóbal de las Casas", "Ciudad Real San Cristóbal", "Ejecutivo San Cristobal", "Tapachula Centenario", "Comitan de Dominguez", "Palenque", "Chiapa de Corzo"]
+                },
+                {
+                    name: "Tabasco",
+                    clubsCount: 10,
+                    members: 150,
+                    clubs: ["Villahermosa", "Centenario Villahermosa", "Macuili-Villahermosa", "Real del Grijalva", "Tabasco 2000", "Tabasco Villahermosa", "Villahermosa Meyaj", "Villahermosa Olmeca", "Cárdenas", "Loma Bonita"]
+                },
+                {
+                    name: "Oaxaca",
+                    clubsCount: 15,
+                    members: 225,
+                    clubs: ["Oaxaca", "Oaxaca Antequera", "Oaxaca Benemérito", "Oaxaca Binnizá", "Guelaguetza de Oaxaca", "Xquenda Oaxaca", "Bahías de Huatulco", "Puerto Escondido", "Zicatela-Puerto Escondido", "Tehuantepec", "Salina Cruz", "Santiago Pinotepa Nacional", "Huajuapan de León", "La Mixteca de Huajuapan", "Pochtl-Tlán de San Pedro Pochutla"]
+                },
+                {
+                    name: "Campeche",
+                    clubsCount: 8,
+                    members: 120,
+                    clubs: ["Campeche", "Ciudad del Carmen", "Ciudad del Carmen-Centenario", "Ciudad del Carmen-Centro", "Perla del Golfo", "Xicalango Ciudad del Carmen", "Escárcega", "Montecristo"]
+                },
+                {
+                    name: "Veracruz (Sur)",
+                    clubsCount: 7,
+                    members: 105,
+                    clubs: ["Coatzacoalcos", "Minatitlán", "Acayucan", "San Andrés Tuxtla Eyipantla", "Catemaco", "Isla", "Tuxtepec"] 
+                }
+            ]
+        };
 
-      {/* HERO SECTION */}
-      <section className="relative bg-blue-800 text-white py-24 overflow-hidden">
-        <div className="absolute inset-0 opacity-20">
-          <img src="https://images.unsplash.com/photo-1593113565694-c6aa89a4acb5?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80" alt="Comunidad" className="w-full h-full object-cover" />
-        </div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-          <span className="text-yellow-400 font-semibold tracking-wider uppercase mb-4 block">La Magia de Rotary</span>
-          <h2 className="text-5xl md:text-6xl font-extrabold mb-6 leading-tight">
-            Uniendo líderes, <br/> transformando el sureste.
-          </h2>
-          <p className="text-xl text-blue-100 max-w-2xl mx-auto mb-10">
-            Somos {districtStats.totalClubs} clubes y más de {districtStats.totalMembers} socios comprometidos con generar un impacto duradero en nuestras comunidades a través de la amistad y el servicio.
-          </p>
-          <div className="flex justify-center space-x-4">
-            <a href="#clubes" className="bg-yellow-500 text-blue-900 px-8 py-3 rounded-full font-bold hover:bg-yellow-400 transition">Encuentra tu Club</a>
-            <a href="#programas" className="bg-transparent border-2 border-white px-8 py-3 rounded-full font-bold hover:bg-white hover:text-blue-900 transition">Nuestros Proyectos</a>
-          </div>
-        </div>
-      </section>
+        function App() {
+            const [activeState, setActiveState] = useState(districtStats.states[0]);
 
-      {/* GOBERNADOR SECTION */}
-      <section id="gobernador" className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row items-center gap-12">
-            <div className="md:w-1/3">
-              <div className="relative">
-                <div className="aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl">
-                  <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Gobernador" className="w-full h-full object-cover" />
+            return (
+                <div className="font-sans text-slate-800 bg-slate-50 min-h-screen">
+                    {/* HEADER / NAVIGATION */}
+                    <header className="bg-blue-900 text-white sticky top-0 z-50 shadow-md">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <div className="flex justify-between items-center h-20">
+                                <div className="flex items-center space-x-3">
+                                    <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center p-1">
+                                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Rotary_International_Seal.svg/1200px-Rotary_International_Seal.svg.png" alt="Rotary Logo" className="w-full h-full object-contain" />
+                                    </div>
+                                    <div>
+                                        <h1 className="text-xl font-bold leading-tight">Distrito 4195</h1>
+                                        <p className="text-sm text-blue-200">Rotary International</p>
+                                    </div>
+                                </div>
+                                <nav className="hidden md:flex space-x-8">
+                                    <a href="#gobernador" className="hover:text-yellow-400 transition">Gobernador</a>
+                                    <a href="#clubes" className="hover:text-yellow-400 transition">Clubes</a>
+                                    <a href="#programas" className="hover:text-yellow-400 transition">Programas</a>
+                                    <a href="#informe" className="hover:text-yellow-400 transition">Informe Anual</a>
+                                    <a href="#contacto" className="hover:text-yellow-400 transition">Contacto</a>
+                                </nav>
+                                <div>
+                                    <a href="#donar" className="bg-yellow-500 text-blue-900 px-6 py-2 rounded-full font-bold hover:bg-yellow-400 transition shadow-lg">
+                                        Donar
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </header>
+
+                    {/* HERO SECTION */}
+                    <section className="relative bg-blue-800 text-white py-24 overflow-hidden">
+                        <div className="absolute inset-0 opacity-20">
+                            <img src="https://images.unsplash.com/photo-1593113565694-c6aa89a4acb5?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80" alt="Comunidad" className="w-full h-full object-cover" />
+                        </div>
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+                            <span className="text-yellow-400 font-semibold tracking-wider uppercase mb-4 block">La Magia de Rotary</span>
+                            <h2 className="text-5xl md:text-6xl font-extrabold mb-6 leading-tight">
+                                Uniendo líderes, <br/> transformando el sureste.
+                            </h2>
+                            <p className="text-xl text-blue-100 max-w-2xl mx-auto mb-10">
+                                Somos {districtStats.totalClubs} clubes y más de {districtStats.totalMembers} socios comprometidos con generar un impacto duradero en nuestras comunidades a través de la amistad y el servicio.
+                            </p>
+                            <div className="flex justify-center space-x-4">
+                                <a href="#clubes" className="bg-yellow-500 text-blue-900 px-8 py-3 rounded-full font-bold hover:bg-yellow-400 transition">Encuentra tu Club</a>
+                                <a href="#programas" className="bg-transparent border-2 border-white px-8 py-3 rounded-full font-bold hover:bg-white hover:text-blue-900 transition">Nuestros Proyectos</a>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* GOBERNADOR SECTION */}
+                    <section id="gobernador" className="py-20 bg-white">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <div className="flex flex-col md:flex-row items-center gap-12">
+                                <div className="md:w-1/3">
+                                    <div className="relative">
+                                        <div className="aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl">
+                                            <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Gobernador" className="w-full h-full object-cover" />
+                                        </div>
+                                        <div className="absolute -bottom-6 -right-6 bg-yellow-500 text-blue-900 p-4 rounded-xl shadow-lg border-4 border-white">
+                                            <p className="font-bold">Ciclo 2024-2025</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="md:w-2/3">
+                                    <h3 className="text-3xl font-bold text-blue-900 mb-2">Mensaje del Gobernador</h3>
+                                    <p className="text-xl text-slate-500 mb-6 italic">"Juntos, hacemos posible lo imposible."</p>
+                                    <div className="prose prose-lg text-slate-600">
+                                        <p className="mb-4">
+                                            Estimados rotarios, rotarianos, rotaractianos e interactianos del Distrito 4195. 
+                                            Abarcamos la región más rica en cultura y biodiversidad de México, desde las costas de Oaxaca hasta el Caribe en Quintana Roo. 
+                                        </p>
+                                        <p>
+                                            Este año, nuestro enfoque está en fortalecer nuestros cimientos, ampliar el alcance de la Fundación Rotaria y asegurar que nuestras comunidades reciban el apoyo que tanto necesitan. Con 81 clubes y más de 1,200 corazones dispuestos, no hay reto que no podamos superar. Los invito a seguir siendo la inspiración.
+                                        </p>
+                                    </div>
+                                    <div className="mt-8">
+                                        <h4 className="font-bold text-lg text-blue-900">Nombre del Gobernador</h4>
+                                        <p className="text-slate-500">Gobernador del Distrito 4195</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* DIRECTORIO Y MAPA DE CLUBES */}
+                    <section id="clubes" className="py-20 bg-slate-100">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <div className="text-center mb-12">
+                                <h3 className="text-3xl font-bold text-blue-900 mb-4">Nuestra Presencia en el Sureste</h3>
+                                <p className="text-slate-600 max-w-2xl mx-auto">Selecciona un estado para explorar los clubes y la fuerza operativa de nuestra red a través de {districtStats.totalClubs} nodos locales.</p>
+                            </div>
+
+                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                                {/* Lista de Estados */}
+                                <div className="lg:col-span-1 bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                                    <div className="p-4 bg-blue-900 text-white font-bold flex items-center">
+                                        <Icons.Map className="w-5 h-5 mr-2" /> Estados del Distrito
+                                    </div>
+                                    <ul className="divide-y divide-slate-100">
+                                        {districtStats.states.map((state) => (
+                                            <li key={state.name}>
+                                                <button 
+                                                    onClick={() => setActiveState(state)}
+                                                    className={`w-full text-left px-6 py-4 flex items-center justify-between transition ${activeState.name === state.name ? 'bg-blue-50 border-l-4 border-yellow-500 text-blue-900 font-bold' : 'hover:bg-slate-50 text-slate-600'}`}
+                                                >
+                                                    {state.name}
+                                                    <Icons.ChevronRight className={`w-5 h-5 ${activeState.name === state.name ? 'text-yellow-500' : 'text-slate-300'}`} />
+                                                </button>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+
+                                {/* Detalles del Estado Activo */}
+                                <div className="lg:col-span-2 flex flex-col">
+                                    <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 flex-grow">
+                                        <div className="flex flex-wrap justify-between items-end mb-8 border-b border-slate-100 pb-6">
+                                            <div>
+                                                <h4 className="text-3xl font-bold text-blue-900">{activeState.name}</h4>
+                                                <p className="text-slate-500 mt-2">Directorio de Tenant Nodes (Subdominios)</p>
+                                            </div>
+                                            <div className="flex space-x-6 mt-4 sm:mt-0">
+                                                <div className="text-center">
+                                                    <span className="block text-2xl font-bold text-yellow-500">{activeState.clubsCount}</span>
+                                                    <span className="text-sm text-slate-500 flex items-center justify-center"><Icons.MapPin className="w-4 h-4 mr-1"/> Clubes</span>
+                                                </div>
+                                                <div className="text-center">
+                                                    <span className="block text-2xl font-bold text-blue-500">~{activeState.members}</span>
+                                                    <span className="text-sm text-slate-500 flex items-center justify-center"><Icons.Users className="w-4 h-4 mr-1"/> Socios</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[400px] overflow-y-auto pr-2">
+                                            {activeState.clubs.map((club, index) => (
+                                                <div key={index} className="flex items-center p-3 rounded-lg hover:bg-slate-50 border border-transparent hover:border-slate-200 transition group cursor-pointer">
+                                                    <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-900 flex items-center justify-center mr-3 flex-shrink-0 group-hover:bg-blue-900 group-hover:text-white transition">
+                                                        <span className="text-xs font-bold">{club.substring(0,2).toUpperCase()}</span>
+                                                    </div>
+                                                    <span className="text-slate-700 font-medium truncate">{club}</span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* PROGRAMAS DISTRITALES */}
+                    <section id="programas" className="py-20 bg-white">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <div className="text-center mb-16">
+                                <h3 className="text-3xl font-bold text-blue-900 mb-4">Programas e Impacto</h3>
+                                <p className="text-slate-600 max-w-2xl mx-auto">Nuestras avenidas de servicio se materializan a través de programas globales y distritales orientados al bienestar humano.</p>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                                <div className="bg-slate-50 rounded-2xl p-8 hover:shadow-lg transition border border-slate-100">
+                                    <div className="w-14 h-14 bg-red-100 text-red-600 rounded-xl flex items-center justify-center mb-6">
+                                        <Icons.ShieldCheck className="w-8 h-8" />
+                                    </div>
+                                    <h4 className="text-xl font-bold text-blue-900 mb-3">End Polio Now</h4>
+                                    <p className="text-slate-600 mb-4">Nuestro programa insignia. Colaboramos como distrito para recaudar fondos y asegurar que la erradicación de la polio sea una realidad definitiva.</p>
+                                    <a href="#" className="text-blue-600 font-bold hover:text-blue-800 flex items-center">Ver campaña <Icons.ChevronRight className="w-4 h-4 ml-1" /></a>
+                                </div>
+
+                                <div className="bg-slate-50 rounded-2xl p-8 hover:shadow-lg transition border border-slate-100">
+                                    <div className="w-14 h-14 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center mb-6">
+                                        <Icons.Globe className="w-8 h-8" />
+                                    </div>
+                                    <h4 className="text-xl font-bold text-blue-900 mb-3">Rotary Youth Exchange</h4>
+                                    <p className="text-slate-600 mb-4">Portal de recursos para estudiantes Inbound/Outbound. Promovemos la paz mundial permitiendo a los jóvenes vivir la cultura de otros países.</p>
+                                    <a href="#" className="text-blue-600 font-bold hover:text-blue-800 flex items-center">Portal Rotex <Icons.ChevronRight className="w-4 h-4 ml-1" /></a>
+                                </div>
+
+                                <div className="bg-slate-50 rounded-2xl p-8 hover:shadow-lg transition border border-slate-100">
+                                    <div className="w-14 h-14 bg-yellow-100 text-yellow-600 rounded-xl flex items-center justify-center mb-6">
+                                        <Icons.HeartHandshake className="w-8 h-8" />
+                                    </div>
+                                    <h4 className="text-xl font-bold text-blue-900 mb-3">Intercambio Amistoso</h4>
+                                    <p className="text-slate-600 mb-4">Fomentamos la amistad internacional entre rotarios mediante visitas recíprocas entre distritos, fortaleciendo alianzas para futuros proyectos.</p>
+                                    <a href="#" className="text-blue-600 font-bold hover:text-blue-800 flex items-center">Saber más <Icons.ChevronRight className="w-4 h-4 ml-1" /></a>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* DONACIONES */}
+                    <section id="donar" className="py-20 bg-blue-900 text-white relative overflow-hidden">
+                        <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-blue-800 rounded-full opacity-50 blur-3xl"></div>
+                        <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 bg-yellow-600 rounded-full opacity-20 blur-3xl"></div>
+                        
+                        <div className="max-w-4xl mx-auto px-4 relative z-10 text-center">
+                            <Icons.Award className="w-16 h-16 text-yellow-400 mx-auto mb-6" />
+                            <h2 className="text-4xl font-bold mb-6">Apoya a la Fundación Rotaria</h2>
+                            <p className="text-xl text-blue-100 mb-8">
+                                Tus aportaciones financian proyectos como "100x100 México" y fortalecen nuestras subvenciones locales. 
+                                <strong> Todas las donaciones a través de FURMEX son 100% deducibles de impuestos.</strong>
+                            </p>
+                            <div className="bg-white text-slate-800 p-8 rounded-2xl shadow-2xl max-w-lg mx-auto">
+                                <h4 className="font-bold text-xl mb-4">Realizar Aportación</h4>
+                                <div className="grid grid-cols-3 gap-4 mb-6">
+                                    <button className="py-2 border-2 border-slate-200 rounded-lg font-bold hover:border-blue-500 hover:text-blue-600 transition">$500</button>
+                                    <button className="py-2 border-2 border-blue-500 bg-blue-50 text-blue-700 rounded-lg font-bold transition">$1,000</button>
+                                    <button className="py-2 border-2 border-slate-200 rounded-lg font-bold hover:border-blue-500 hover:text-blue-600 transition">$5,000</button>
+                                </div>
+                                <button className="w-full bg-yellow-500 text-blue-900 py-4 rounded-xl font-bold text-lg hover:bg-yellow-400 transition shadow-md">
+                                    Donar Ahora
+                                </button>
+                                <p className="text-xs text-slate-400 mt-4 flex items-center justify-center">
+                                    <Icons.ShieldCheck className="w-4 h-4 mr-1" /> Transacción segura mediante Stripe/Mercado Pago
+                                </p>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* INFORME ANUAL */}
+                    <section id="informe" className="py-16 bg-slate-100 border-y border-slate-200">
+                        <div className="max-w-5xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between">
+                            <div className="flex items-center mb-6 md:mb-0">
+                                <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm mr-6 text-blue-600">
+                                    <Icons.FileText className="w-8 h-8" />
+                                </div>
+                                <div>
+                                    <h4 className="text-2xl font-bold text-blue-900">Transparencia y Resultados</h4>
+                                    <p className="text-slate-600">Descarga el Informe Anual de Actividades y Finanzas 2023-2024</p>
+                                </div>
+                            </div>
+                            <button className="bg-white border-2 border-blue-900 text-blue-900 px-6 py-3 rounded-full font-bold hover:bg-blue-900 hover:text-white transition">
+                                Descargar PDF
+                            </button>
+                        </div>
+                    </section>
+
+                    {/* FOOTER / CONTACTO */}
+                    <footer id="contacto" className="bg-slate-900 text-slate-300 py-16">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
+                                <div className="md:col-span-2">
+                                    <div className="flex items-center space-x-3 mb-6">
+                                        <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center p-1">
+                                           <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Rotary_International_Seal.svg/1200px-Rotary_International_Seal.svg.png" alt="Rotary Logo" className="w-full h-full object-contain" />
+                                        </div>
+                                        <span className="text-xl font-bold text-white">Distrito 4195</span>
+                                    </div>
+                                    <p className="mb-6">
+                                        El ecosistema digital central del Distrito 4195. Conectando a más de 80 clubes para crear esperanza en el mundo.
+                                    </p>
+                                </div>
+                                
+                                <div>
+                                    <h4 className="text-white font-bold mb-6">Enlaces Rápidos</h4>
+                                    <ul className="space-y-3">
+                                        <li><a href="#" className="hover:text-yellow-400 transition">Acceso Intranet (Oficiales)</a></li>
+                                        <li><a href="#" className="hover:text-yellow-400 transition">Solicitud de Subvenciones</a></li>
+                                        <li><a href="#" className="hover:text-yellow-400 transition">Aviso de Privacidad</a></li>
+                                    </ul>
+                                </div>
+
+                                <div>
+                                    <h4 className="text-white font-bold mb-6">Contacto</h4>
+                                    <ul className="space-y-4">
+                                        <li className="flex items-start">
+                                            <Icons.Mail className="w-5 h-5 mr-3 text-blue-400 mt-1" />
+                                            <span>secretaria@rotary4195.org</span>
+                                        </li>
+                                        <li className="flex items-start">
+                                            <Icons.Phone className="w-5 h-5 mr-3 text-blue-400 mt-1" />
+                                            <span>+52 (999) 123 4567</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </footer>
                 </div>
-                <div className="absolute -bottom-6 -right-6 bg-yellow-500 text-blue-900 p-4 rounded-xl shadow-lg border-4 border-white">
-                  <p className="font-bold">Ciclo 2024-2025</p>
-                </div>
-              </div>
-            </div>
-            <div className="md:w-2/3">
-              <h3 className="text-3xl font-bold text-blue-900 mb-2">Mensaje del Gobernador</h3>
-              <p className="text-xl text-slate-500 mb-6 italic">"Juntos, hacemos posible lo imposible."</p>
-              <div className="prose prose-lg text-slate-600">
-                <p>
-                  Estimados rotarios, rotarianos, rotaractianos e interactianos del Distrito 4195. 
-                  Abarcamos la región más rica en cultura y biodiversidad de México, desde las costas de Oaxaca hasta el Caribe en Quintana Roo. 
-                </p>
-                <p>
-                  Este año, nuestro enfoque está en fortalecer nuestros cimientos, ampliar el alcance de la Fundación Rotaria y asegurar que nuestras comunidades reciban el apoyo que tanto necesitan. Con 81 clubes y más de 1,200 corazones dispuestos, no hay reto que no podamos superar. Los invito a seguir siendo la inspiración.
-                </p>
-              </div>
-              <div className="mt-8">
-                <h4 className="font-bold text-lg text-blue-900">Nombre del Gobernador</h4>
-                <p className="text-slate-500">Gobernador del Distrito 4195</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+            );
+        }
 
-      {/* DIRECTORIO Y MAPA DE CLUBES */}
-      <section id="clubes" className="py-20 bg-slate-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h3 className="text-3xl font-bold text-blue-900 mb-4">Nuestra Presencia en el Sureste</h3>
-            <p className="text-slate-600 max-w-2xl mx-auto">Selecciona un estado para explorar los clubes y la fuerza operativa de nuestra red a través de {districtStats.totalClubs} nodos locales.</p>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Lista de Estados (Simulación de Mapa) */}
-            <div className="lg:col-span-1 bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-              <div className="p-4 bg-blue-900 text-white font-bold flex items-center">
-                <Map className="w-5 h-5 mr-2" /> Estados del Distrito
-              </div>
-              <ul className="divide-y divide-slate-100">
-                {districtStats.states.map((state) => (
-                  <li key={state.name}>
-                    <button 
-                      onClick={() => setActiveState(state)}
-                      className={`w-full text-left px-6 py-4 flex items-center justify-between transition ${activeState.name === state.name ? 'bg-blue-50 border-l-4 border-yellow-500 text-blue-900 font-bold' : 'hover:bg-slate-50 text-slate-600'}`}
-                    >
-                      {state.name}
-                      <ChevronRight className={`w-5 h-5 ${activeState.name === state.name ? 'text-yellow-500' : 'text-slate-300'}`} />
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Detalles del Estado Activo */}
-            <div className="lg:col-span-2 flex flex-col">
-              <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 flex-grow">
-                <div className="flex flex-wrap justify-between items-end mb-8 border-b border-slate-100 pb-6">
-                  <div>
-                    <h4 className="text-3xl font-bold text-blue-900">{activeState.name}</h4>
-                    <p className="text-slate-500 mt-2">Directorio de Tenant Nodes (Subdominios)</p>
-                  </div>
-                  <div className="flex space-x-6 mt-4 sm:mt-0">
-                    <div className="text-center">
-                      <span className="block text-2xl font-bold text-yellow-500">{activeState.clubsCount}</span>
-                      <span className="text-sm text-slate-500 flex items-center"><MapPin className="w-4 h-4 mr-1"/> Clubes</span>
-                    </div>
-                    <div className="text-center">
-                      <span className="block text-2xl font-bold text-blue-500">~{activeState.members}</span>
-                      <span className="text-sm text-slate-500 flex items-center"><Users className="w-4 h-4 mr-1"/> Socios</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
-                  {activeState.clubs.map((club, index) => (
-                    <div key={index} className="flex items-center p-3 rounded-lg hover:bg-slate-50 border border-transparent hover:border-slate-200 transition group cursor-pointer">
-                      <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-900 flex items-center justify-center mr-3 flex-shrink-0 group-hover:bg-blue-900 group-hover:text-white transition">
-                        <span className="text-xs font-bold">{club.substring(0,2).toUpperCase()}</span>
-                      </div>
-                      <span className="text-slate-700 font-medium truncate">{club}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* PROGRAMAS DISTRITALES */}
-      <section id="programas" className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h3 className="text-3xl font-bold text-blue-900 mb-4">Programas e Impacto</h3>
-            <p className="text-slate-600 max-w-2xl mx-auto">Nuestras avenidas de servicio se materializan a través de programas globales y distritales orientados al bienestar humano.</p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Polio */}
-            <div className="bg-slate-50 rounded-2xl p-8 hover:shadow-lg transition border border-slate-100">
-              <div className="w-14 h-14 bg-red-100 text-red-600 rounded-xl flex items-center justify-center mb-6">
-                <ShieldCheck className="w-8 h-8" />
-              </div>
-              <h4 className="text-xl font-bold text-blue-900 mb-3">End Polio Now</h4>
-              <p className="text-slate-600 mb-4">Nuestro programa insignia. Colaboramos como distrito para recaudar fondos y asegurar que la erradicación de la polio sea una realidad definitiva.</p>
-              <a href="#" className="text-blue-600 font-bold hover:text-blue-800 flex items-center">Ver campaña <ChevronRight className="w-4 h-4 ml-1" /></a>
-            </div>
-
-            {/* RYE */}
-            <div className="bg-slate-50 rounded-2xl p-8 hover:shadow-lg transition border border-slate-100">
-              <div className="w-14 h-14 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center mb-6">
-                <Globe className="w-8 h-8" />
-              </div>
-              <h4 className="text-xl font-bold text-blue-900 mb-3">Rotary Youth Exchange (RYE)</h4>
-              <p className="text-slate-600 mb-4">Portal de recursos para estudiantes Inbound/Outbound. Promovemos la paz mundial permitiendo a los jóvenes vivir la cultura de otros países.</p>
-              <a href="#" className="text-blue-600 font-bold hover:text-blue-800 flex items-center">Portal Rotex <ChevronRight className="w-4 h-4 ml-1" /></a>
-            </div>
-
-            {/* Intercambio Amistoso */}
-            <div className="bg-slate-50 rounded-2xl p-8 hover:shadow-lg transition border border-slate-100">
-              <div className="w-14 h-14 bg-yellow-100 text-yellow-600 rounded-xl flex items-center justify-center mb-6">
-                <HeartHandshake className="w-8 h-8" />
-              </div>
-              <h4 className="text-xl font-bold text-blue-900 mb-3">Intercambio Amistoso</h4>
-              <p className="text-slate-600 mb-4">Fomentamos la amistad internacional entre rotarios mediante visitas recíprocas entre distritos, fortaleciendo alianzas para futuros proyectos.</p>
-              <a href="#" className="text-blue-600 font-bold hover:text-blue-800 flex items-center">Saber más <ChevronRight className="w-4 h-4 ml-1" /></a>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* DONACIONES Y DEDUCIBILIDAD */}
-      <section id="donar" className="py-20 bg-blue-900 text-white relative overflow-hidden">
-        <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-blue-800 rounded-full opacity-50 blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 bg-yellow-600 rounded-full opacity-20 blur-3xl"></div>
-        
-        <div className="max-w-4xl mx-auto px-4 relative z-10 text-center">
-          <Award className="w-16 h-16 text-yellow-400 mx-auto mb-6" />
-          <h2 className="text-4xl font-bold mb-6">Apoya a la Fundación Rotaria</h2>
-          <p className="text-xl text-blue-100 mb-8">
-            Tus aportaciones financian proyectos como "100x100 México" y fortalecen nuestras subvenciones locales. 
-            <strong> Todas las donaciones a través de FURMEX son 100% deducibles de impuestos.</strong>
-          </p>
-          <div className="bg-white text-slate-800 p-8 rounded-2xl shadow-2xl max-w-lg mx-auto">
-            <h4 className="font-bold text-xl mb-4">Realizar Aportación</h4>
-            <div className="grid grid-cols-3 gap-4 mb-6">
-              <button className="py-2 border-2 border-slate-200 rounded-lg font-bold hover:border-blue-500 hover:text-blue-600 transition">$500</button>
-              <button className="py-2 border-2 border-blue-500 bg-blue-50 text-blue-700 rounded-lg font-bold transition">$1,000</button>
-              <button className="py-2 border-2 border-slate-200 rounded-lg font-bold hover:border-blue-500 hover:text-blue-600 transition">$5,000</button>
-            </div>
-            <button className="w-full bg-yellow-500 text-blue-900 py-4 rounded-xl font-bold text-lg hover:bg-yellow-400 transition shadow-md">
-              Donar Ahora (Gateway Seguro)
-            </button>
-            <p className="text-xs text-slate-400 mt-4 flex items-center justify-center">
-              <ShieldCheck className="w-4 h-4 mr-1" /> Transacción segura mediante Stripe/Mercado Pago
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* INFORME ANUAL */}
-      <section id="informe" className="py-16 bg-slate-100 border-y border-slate-200">
-        <div className="max-w-5xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between">
-          <div className="flex items-center mb-6 md:mb-0">
-            <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm mr-6 text-blue-600">
-              <FileText className="w-8 h-8" />
-            </div>
-            <div>
-              <h4 className="text-2xl font-bold text-blue-900">Transparencia y Resultados</h4>
-              <p className="text-slate-600">Descarga el Informe Anual de Actividades y Finanzas 2023-2024</p>
-            </div>
-          </div>
-          <button className="bg-white border-2 border-blue-900 text-blue-900 px-6 py-3 rounded-full font-bold hover:bg-blue-900 hover:text-white transition">
-            Descargar PDF
-          </button>
-        </div>
-      </section>
-
-      {/* FOOTER / CONTACTO */}
-      <footer id="contacto" className="bg-slate-900 text-slate-300 py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
-            <div className="md:col-span-2">
-              <div className="flex items-center space-x-3 mb-6">
-                <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center p-1">
-                   <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Rotary_International_Seal.svg/1200px-Rotary_International_Seal.svg.png" alt="Rotary Logo" className="w-full h-full object-contain" />
-                </div>
-                <span className="text-xl font-bold text-white">Distrito 4195</span>
-              </div>
-              <p className="mb-6">
-                El ecosistema digital central del Distrito 4195 (Oaxaca, Chiapas, Tabasco, Veracruz Sur, Campeche, Yucatán y Quintana Roo). Conectando a más de 80 clubes para crear esperanza en el mundo.
-              </p>
-              <div className="flex space-x-4">
-                {/* Redes sociales placeholders */}
-                <div className="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center hover:bg-blue-600 transition cursor-pointer">FB</div>
-                <div className="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center hover:bg-blue-400 transition cursor-pointer">TW</div>
-                <div className="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center hover:bg-pink-600 transition cursor-pointer">IG</div>
-              </div>
-            </div>
-            
-            <div>
-              <h4 className="text-white font-bold mb-6">Enlaces Rápidos</h4>
-              <ul className="space-y-3">
-                <li><a href="#" className="hover:text-yellow-400 transition">Acceso Intranet (Oficiales)</a></li>
-                <li><a href="#" className="hover:text-yellow-400 transition">Solicitud de Subvenciones</a></li>
-                <li><a href="#" className="hover:text-yellow-400 transition">Aviso de Privacidad (ARCO)</a></li>
-                <li><a href="#" className="hover:text-yellow-400 transition">Calendario de Eventos</a></li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="text-white font-bold mb-6">Contacto Distrital</h4>
-              <ul className="space-y-4">
-                <li className="flex items-start">
-                  <Mail className="w-5 h-5 mr-3 text-blue-400 mt-1" />
-                  <span>secretaria@rotary4195.org</span>
-                </li>
-                <li className="flex items-start">
-                  <Phone className="w-5 h-5 mr-3 text-blue-400 mt-1" />
-                  <span>+52 (999) 123 4567<br/><small className="text-slate-500">Oficina Mérida, Yucatán</small></span>
-                </li>
-              </ul>
-            </div>
-          </div>
-          
-          <div className="border-t border-slate-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center text-sm">
-            <p>&copy; 2026 Rotary International Distrito 4195. Todos los derechos reservados.</p>
-            <p className="mt-2 md:mt-0">Desarrollado sobre Arquitectura Multi-Tenant</p>
-          </div>
-        </div>
-      </footer>
-    </div>
-  );
-}
+        // Renderizado inicial
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
